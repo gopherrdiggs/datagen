@@ -7,7 +7,7 @@ export class UserSigning {
 
   render() {
     return [
-
+      <p>Sign in</p>
     ];
   }
 }

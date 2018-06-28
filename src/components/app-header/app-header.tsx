@@ -12,7 +12,7 @@ export class AppHeader {
           <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
           </ion-buttons>
-          <ion-title>App Header</ion-title>
+          <ion-title>DataGen</ion-title>
           <ion-buttons slot="end">
             <ion-button href='/sign-in'>Sign In</ion-button>
           </ion-buttons>

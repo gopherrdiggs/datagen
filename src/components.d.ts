@@ -28,6 +28,141 @@ declare global {
 import '@ionic/core';
 import 'ionicons';
 
+import {
+  DataRow,
+} from './interfaces/interfaces';
+
+declare global {
+
+  namespace StencilComponents {
+    interface AboutCellTemplates {
+
+    }
+  }
+
+  interface HTMLAboutCellTemplatesElement extends StencilComponents.AboutCellTemplates, HTMLStencilElement {}
+
+  var HTMLAboutCellTemplatesElement: {
+    prototype: HTMLAboutCellTemplatesElement;
+    new (): HTMLAboutCellTemplatesElement;
+  };
+  interface HTMLElementTagNameMap {
+    'about-cell-templates': HTMLAboutCellTemplatesElement;
+  }
+  interface ElementTagNameMap {
+    'about-cell-templates': HTMLAboutCellTemplatesElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'about-cell-templates': JSXElements.AboutCellTemplatesAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface AboutCellTemplatesAttributes extends HTMLAttributes {
+
+    }
+  }
+}
+
+
+declare global {
+
+  namespace StencilComponents {
+    interface AboutSavedConfigurations {
+
+    }
+  }
+
+  interface HTMLAboutSavedConfigurationsElement extends StencilComponents.AboutSavedConfigurations, HTMLStencilElement {}
+
+  var HTMLAboutSavedConfigurationsElement: {
+    prototype: HTMLAboutSavedConfigurationsElement;
+    new (): HTMLAboutSavedConfigurationsElement;
+  };
+  interface HTMLElementTagNameMap {
+    'about-saved-configurations': HTMLAboutSavedConfigurationsElement;
+  }
+  interface ElementTagNameMap {
+    'about-saved-configurations': HTMLAboutSavedConfigurationsElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'about-saved-configurations': JSXElements.AboutSavedConfigurationsAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface AboutSavedConfigurationsAttributes extends HTMLAttributes {
+
+    }
+  }
+}
+
+
+declare global {
+
+  namespace StencilComponents {
+    interface AppAuth {
+      'displayScreen': string;
+    }
+  }
+
+  interface HTMLAppAuthElement extends StencilComponents.AppAuth, HTMLStencilElement {}
+
+  var HTMLAppAuthElement: {
+    prototype: HTMLAppAuthElement;
+    new (): HTMLAppAuthElement;
+  };
+  interface HTMLElementTagNameMap {
+    'app-auth': HTMLAppAuthElement;
+  }
+  interface ElementTagNameMap {
+    'app-auth': HTMLAppAuthElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'app-auth': JSXElements.AppAuthAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface AppAuthAttributes extends HTMLAttributes {
+      'displayScreen'?: string;
+    }
+  }
+}
+
+
+declare global {
+
+  namespace StencilComponents {
+    interface AppAuthcallback {
+
+    }
+  }
+
+  interface HTMLAppAuthcallbackElement extends StencilComponents.AppAuthcallback, HTMLStencilElement {}
+
+  var HTMLAppAuthcallbackElement: {
+    prototype: HTMLAppAuthcallbackElement;
+    new (): HTMLAppAuthcallbackElement;
+  };
+  interface HTMLElementTagNameMap {
+    'app-authcallback': HTMLAppAuthcallbackElement;
+  }
+  interface ElementTagNameMap {
+    'app-authcallback': HTMLAppAuthcallbackElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'app-authcallback': JSXElements.AppAuthcallbackAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface AppAuthcallbackAttributes extends HTMLAttributes {
+
+    }
+  }
+}
+
 
 declare global {
 
@@ -122,6 +257,106 @@ declare global {
   }
   namespace JSXElements {
     export interface AppRootAttributes extends HTMLAttributes {
+
+    }
+  }
+}
+
+
+declare global {
+
+  namespace StencilComponents {
+    interface AppWelcome {
+
+    }
+  }
+
+  interface HTMLAppWelcomeElement extends StencilComponents.AppWelcome, HTMLStencilElement {}
+
+  var HTMLAppWelcomeElement: {
+    prototype: HTMLAppWelcomeElement;
+    new (): HTMLAppWelcomeElement;
+  };
+  interface HTMLElementTagNameMap {
+    'app-welcome': HTMLAppWelcomeElement;
+  }
+  interface ElementTagNameMap {
+    'app-welcome': HTMLAppWelcomeElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'app-welcome': JSXElements.AppWelcomeAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface AppWelcomeAttributes extends HTMLAttributes {
+
+    }
+  }
+}
+
+
+declare global {
+
+  namespace StencilComponents {
+    interface ConfigurationCreate {
+
+    }
+  }
+
+  interface HTMLConfigurationCreateElement extends StencilComponents.ConfigurationCreate, HTMLStencilElement {}
+
+  var HTMLConfigurationCreateElement: {
+    prototype: HTMLConfigurationCreateElement;
+    new (): HTMLConfigurationCreateElement;
+  };
+  interface HTMLElementTagNameMap {
+    'configuration-create': HTMLConfigurationCreateElement;
+  }
+  interface ElementTagNameMap {
+    'configuration-create': HTMLConfigurationCreateElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'configuration-create': JSXElements.ConfigurationCreateAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface ConfigurationCreateAttributes extends HTMLAttributes {
+      'onConfigurationCreated'?: (event: CustomEvent) => void;
+    }
+  }
+}
+
+
+declare global {
+
+  namespace StencilComponents {
+    interface DataGrid {
+      'getDataRows': () => DataRow[];
+      'insertDataRow': (index?: number) => void;
+    }
+  }
+
+  interface HTMLDataGridElement extends StencilComponents.DataGrid, HTMLStencilElement {}
+
+  var HTMLDataGridElement: {
+    prototype: HTMLDataGridElement;
+    new (): HTMLDataGridElement;
+  };
+  interface HTMLElementTagNameMap {
+    'data-grid': HTMLDataGridElement;
+  }
+  interface ElementTagNameMap {
+    'data-grid': HTMLDataGridElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'data-grid': JSXElements.DataGridAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface DataGridAttributes extends HTMLAttributes {
 
     }
   }

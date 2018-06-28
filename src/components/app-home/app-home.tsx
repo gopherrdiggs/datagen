@@ -251,7 +251,6 @@ export class AppHome {
                   <ion-item>
                     <ion-label position='floating'>Name</ion-label>
                     <ion-select id="configSelect" 
-                                placeholder="Select ..." 
                                 value={ this.selectedConfigName }
                                 selectedText={ this.selectedConfigName }>
                       { this.userConfigurations.map(configuration => 

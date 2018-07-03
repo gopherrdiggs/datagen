@@ -198,7 +198,7 @@ export class AppHome {
     this.workbook.SheetNames.push("Sheet 1");
     // Generate column and row data for sheet in JSON format
     var ws_data = await this.processDataRows();
-    console.log(ws_data);
+    
     // Push the data into the sheet
     this.workbook.Sheets["Sheet 1"] = XLSX.utils.aoa_to_sheet(ws_data);
     // Write the file which prompts for download

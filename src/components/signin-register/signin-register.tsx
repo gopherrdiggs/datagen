@@ -12,7 +12,7 @@ export class SigninRegister {
 
   @Listen('ionChange')
   handleFieldChange(event: any) {
-    console.log(event);
+    
     if (event && event.detail) {
       if (event.target.id === "email") {
         this.emailAddress = event.detail.value;

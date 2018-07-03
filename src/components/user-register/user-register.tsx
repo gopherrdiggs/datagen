@@ -1,5 +1,5 @@
 import { Component, State } from '@stencil/core';
-declare const AWS: any;
+// declare const AWS: any;
 
 @Component({
   tag: 'user-register'
@@ -10,11 +10,11 @@ export class UserRegister {
   @State() password: string;
   userPool: any;
 
-  componentWillLoad() {
+  // componentWillLoad() {
 
-    console.log(AWS);
-    console.log(this.userPool);
-  }
+  //   console.log(AWS);
+  //   console.log(this.userPool);
+  // }
 
   registerUser() {
 

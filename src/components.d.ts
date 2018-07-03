@@ -392,6 +392,7 @@ declare global {
   }
   namespace JSXElements {
     export interface DataGridAttributes extends HTMLAttributes {
+      'onDataRowDeleted'?: (event: CustomEvent) => void;
       'onDataRowUpdated'?: (event: CustomEvent) => void;
     }
   }

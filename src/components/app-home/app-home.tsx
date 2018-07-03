@@ -255,12 +255,24 @@ export class AppHome {
   @Listen('body:dataRowUpdated')
   handleDataRowUpdated(event: any) {
     
-    this.selectedConfiguration.columns[event.detail.index] = {
+    this.selectedConfigColumns[event.detail.index] = {
       name: event.detail.columnName,
       cellTemplate: event.detail.columnValue,
       isActive: event.detail.isActive
     };
+
+    this.selectedConfiguration.columns = this.selectedConfigColumns;
+
     this.configHasChanges = true;
+  }
+
+  @Listen('body:dataRowDeleted')
+  handleDataRowDeleted(event: any) {
+    
+    var clmnToRemove = this.selectedConfigColumns[event.detail - 1];
+    this.selectedConfigColumns = this.selectedConfigColumns.filter(c => {
+      return c.name != clmnToRemove.name && c.cellTemplate != clmnToRemove.cellTemplate;
+    });
   }
 
   render() {

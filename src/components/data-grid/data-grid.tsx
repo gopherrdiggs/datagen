@@ -8,6 +8,7 @@ import { DataRow } from '../../interfaces/interfaces';
 export class DataGrid {
 
   @Event() dataRowUpdated: EventEmitter;
+  @Event() dataRowDeleted: EventEmitter;
   @State() dataRows: Array<DataRow> = []
 
   componentWillLoad() {
@@ -54,10 +55,13 @@ export class DataGrid {
 
   removeDataRow(index: number) {
 
-    var tempRows = this.dataRows.filter(r => { return r.index != index; });
+    var tempRows = this.dataRows.filter(r => { 
+      return r.index != index; 
+    });
     index = 0;
     tempRows.map(r => { r.index = index++ });
     this.dataRows = tempRows;
+    this.dataRowDeleted.emit(index);
   }
 
   getIndexFromId(elementId: string) {

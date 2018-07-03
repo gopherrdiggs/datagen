@@ -1,0 +1,13 @@
+.toast-success .toast-wrapper {
+  background: var(--ion-color-success);
+}
+.toast-success .toast-wrapper * {
+  color: #fff;
+}
+
+.toast-failure .toast-wrapper {
+  background: var(--ion-color-danger);
+}
+.toast-failure .toast-wrapper * {
+  color: #fff;
+}

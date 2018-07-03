@@ -3,7 +3,8 @@ import { UserSettings, Configuration, ConfigurationColumn, DataRow } from '../..
 declare const XLSX: any;
 
 @Component({
-  tag: 'app-home' 
+  tag: 'app-home',
+  styleUrl: 'app-home.css'
 })
 export class AppHome {
 
@@ -71,13 +72,7 @@ export class AppHome {
 
     this.userSettings.configurations = this.userConfigurations;
     localStorage.setItem(this.localStorageKey, JSON.stringify(this.userSettings));
-    const toastController = document.querySelector('ion-toast-controller');
-    const toast = await toastController.create({
-      message: 'Settings saved!',
-      duration: 3000
-    });
-
-    await toast.present();
+    await this.displayToast('Settings saved!');
     this.configHasChanges = false;
   }
 
@@ -89,6 +84,17 @@ export class AppHome {
       componentProps: componentProps
     });
     await modal.present();
+  }
+
+  async displayToast(message: string, isSuccess: boolean = true) {
+
+    const toastController = document.querySelector('ion-toast-controller');
+    const toast = await toastController.create({
+      message: message,
+      cssClass: isSuccess ? 'toast-success' : 'toast-failure',
+      duration: 3000
+    });
+    await toast.present();
   }
 
   @Listen('body:configurationCreated')

@@ -1,6 +1,6 @@
 # DataGen.app
 
-DataGen.app is a Progress Web App that is used to generate Excel spreadsheets based on template data.
+DataGen.app is a Progressive Web App that is used to generate Excel spreadsheets based on template data.
 The generated spreadsheets can be used as import files into other systems, or you can use them as seed data for reporting.
 
 ## Technical Features

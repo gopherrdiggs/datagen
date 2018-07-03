@@ -1,19 +1,19 @@
 import { Component } from '@stencil/core';
 
 @Component({
-  tag: 'about-saved-configurations'
+  tag: 'about-named-configurations'
 })
-export class AboutSavedConfigurations {
+export class AboutNamedConfigurations {
 
   render() {
     return [
       <app-header>
         <ion-toolbar slot="secondary-toolbar" color="secondary">
-          <ion-title>About Saved Configurations</ion-title>
+          <ion-title>Named Configurations</ion-title>
         </ion-toolbar>
       </app-header>,
       <ion-content padding>
-        <p>Saved configurations are...</p>
+        <p>Named configurations are...</p>
       </ion-content>,
       <ion-footer>
         <ion-grid>
@@ -22,7 +22,7 @@ export class AboutSavedConfigurations {
               <ion-card onClick={ () => document.querySelector('ion-nav').push('app-welcome') }>
                 <ion-card-header>Previous</ion-card-header>
                 <ion-card-content>
-                  <h1>Welcome to DataGen!</h1>
+                  <h1>Welcome!</h1>
                 </ion-card-content>
               </ion-card>
             </ion-col>

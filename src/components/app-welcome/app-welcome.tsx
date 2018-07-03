@@ -13,7 +13,10 @@ export class AppWelcome {
         </ion-toolbar>
       </app-header>,
       <ion-content padding>
-        <p>DataGen is...</p>
+        <h2>Getting Started</h2>
+        <p>DataGen is a lightweight application to help you generate potentially very large spreadsheets in a matter of seconds, right from your browser.<br/><br/>
+           To get a better understanding of the app, navigate through the Getting Started information using the buttons at the bottom of the screen.<br/><br/>
+           If you're ready to jump right in and generate a spreadsheet, click <a href="/home">here</a>.</p>
       </ion-content>,
       <ion-footer>
         <ion-grid>
@@ -22,10 +25,10 @@ export class AppWelcome {
               
             </ion-col>
             <ion-col>
-              <ion-card onClick={ () => document.querySelector('ion-nav').push('about-saved-configurations') }>
+              <ion-card onClick={ () => document.querySelector('ion-nav').push('about-named-configurations') }>
                 <ion-card-header>Next</ion-card-header>
                 <ion-card-content>
-                  <h1>Saved Configurations</h1>
+                  <h1>Named Configurations</h1>
                 </ion-card-content>
               </ion-card>
             </ion-col>

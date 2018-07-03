@@ -1,6 +1,5 @@
 import { Component, Listen, State } from '@stencil/core';
-import { AuthService } from '../../services/auth-service';
-import { UserSettings, Configuration, ConfigurationColumn } from '../../interfaces/interfaces';
+import { UserSettings, Configuration, ConfigurationColumn, DataRow } from '../../interfaces/interfaces';
 declare const XLSX: any;
 
 @Component({
@@ -8,28 +7,36 @@ declare const XLSX: any;
 })
 export class AppHome {
 
-  authSvc: AuthService = new AuthService();
-  @State() name: string = '';
-  @State() baseValue: string = '';
-  @State() numRowsToGenerate: number = 1;
-  @State() isCounterPadded: boolean = true;
-  @State() configHasChanges: boolean = false;
-  @State() userConfigurations: Array<Configuration> = [];
-  @State() configColumns: Array<ConfigurationColumn> = [];
-  @State() selectedConfigName: string;
-  userId: string;
   userSettings: UserSettings;
+  selectedConfiguration: Configuration;
+  @State() userConfigurations: Array<Configuration> = [];
+  @State() selectedConfigName: string = '';
+  @State() selectedConfigBaseValue: string = '';
+  @State() selectedConfigNumRowsToGenerate: number = 1;
+  @State() selectedConfigPadIncrementedNumbers: boolean = true;
+  @State() selectedConfigColumns: Array<ConfigurationColumn> = [];
+  @State() configHasChanges: boolean = false;
+  localStorageKey: string = 'datagen_configs';
+  userId: string;
   dataGridElem: any;
   workbook:any;
   counter: number;
 
   async componentWillLoad() {
 
-    if (await this.authSvc.getIsUserAuthenticated()) {
-
-      this.userId = localStorage.getItem('user_id');
-      // await this.getUserSettings();
+    this.userSettings = {
+      accountInfo: {
+        userDisplayName: 'Guest'
+      },
+      configurations: []
+    };
+    
+    var userSettings = localStorage.getItem(this.localStorageKey);
+    if (userSettings) {
+      this.userSettings = JSON.parse(userSettings);
     }
+
+    this.userConfigurations = this.userSettings.configurations;
   }
 
   componentDidLoad() {
@@ -37,57 +44,55 @@ export class AppHome {
     this.dataGridElem = document.querySelector('data-grid');
   }
 
-  async getUserSettings() {
-
-    if (!this.userId) { return; }
-
-    let response = await fetch(
-      `...`, {
-        method: 'GET'
-    });
-
-    if (response.ok) {
-
-      this.userSettings = await response.json();
-      this.userConfigurations = this.userSettings.configurations;
-      if (this.userConfigurations.length > 0) {
-        this.loadConfiguration(this.userConfigurations[0].name);
-      }
-    }
-  }
-
   loadConfiguration(configName: string) {
 
     var config = this.userConfigurations.find(c => { return c.name === configName });
     if (!config) { return; }
-    
-    console.log(`loading config: ${configName}`);
-    if (this.selectedConfigName != configName) {
-      console.log(`setting selected config name`);
-      this.selectedConfigName = configName;
+    this.selectedConfiguration = config;
+    this.selectedConfigName = config.name;
+    this.selectedConfigBaseValue = config.baseValue;
+    this.selectedConfigNumRowsToGenerate = config.numRowsToGenerate;
+    this.selectedConfigPadIncrementedNumbers = config.padIncrementedNumbers;
+    this.selectedConfigColumns = config.columns;
+    let dataRows: Array<DataRow> = [];
+    let indx = 0;
+    for (let col of this.selectedConfigColumns) {
+      dataRows.push({
+        index: indx++,
+        columnName: col.name,
+        columnValue: col.cellTemplate,
+        isActive: col.isActive
+      });
     }
-    this.baseValue = config.baseValue;
-    this.numRowsToGenerate = config.numRowsToGenerate;
-    this.isCounterPadded = config.padIncrementedNumbers;
-    this.configColumns = config.columns;
+    this.dataGridElem.loadDataRows(dataRows);
   }
 
   async saveUserSettings() {
 
-    console.log(JSON.stringify(this.userSettings));
+    this.userSettings.configurations = this.userConfigurations;
+    localStorage.setItem(this.localStorageKey, JSON.stringify(this.userSettings));
+    const toastController = document.querySelector('ion-toast-controller');
+    const toast = await toastController.create({
+      message: 'Settings saved!',
+      duration: 3000
+    });
+
+    await toast.present();
+    this.configHasChanges = false;
   }
 
-  async displayNewConfigModal() {
+  async displayModal(component: string, componentProps?: any) {
 
     const modalController = document.querySelector('ion-modal-controller');
     const modal = await modalController.create({
-      component: 'configuration-create'
+      component: component,
+      componentProps: componentProps
     });
     await modal.present();
   }
 
   @Listen('body:configurationCreated')
-  handleItemCreated(event: any) {
+  handleConfigCreated(event: any) {
 
     var newConfig = {
       name: event.detail,
@@ -100,13 +105,25 @@ export class AppHome {
     this.loadConfiguration(newConfig.name);
   }
 
+  @Listen('body:configurationEdited')
+  handleConfigEdited(event: any) {
+
+    this.userConfigurations = this.userConfigurations.map(c => { 
+      if (c.name === this.selectedConfigName) {
+        c.name =  event.detail;
+      }
+      return c;
+    });
+    this.selectedConfigName = event.detail;
+  }
+
   async processCellTemplate(template: string) {
 
     //TODO: Optimize processing by caching non-calculated templates
     var uppedTemplate = template.toUpperCase();
 
     // {Base} = base value entered
-    template = template.replace(/{base}/gi, this.baseValue);
+    template = template.replace(/{base}/gi, this.selectedConfigBaseValue);
     // {Today} = today's date in format MM/dd/yyyy
     if (uppedTemplate.indexOf('{TODAY}') > -1) {
       var today = new Date();
@@ -118,8 +135,8 @@ export class AppHome {
     // {x} = incrementing counter
     if (uppedTemplate.indexOf('{X}') > -1) {
       template = template.replace(/{x}/gi, 
-        this.isCounterPadded
-          ? this.counter.toString().padStart(this.numRowsToGenerate.toString().length, '0')
+        this.selectedConfigPadIncrementedNumbers
+          ? this.counter.toString().padStart(this.selectedConfigNumRowsToGenerate.toString().length, '0')
           : this.counter.toString());
     }
     // {rand(x,y)} = random number between x and y
@@ -155,7 +172,7 @@ export class AppHome {
     var i;
     var cellValues: Array<any>;
     this.counter = 1;
-    for (i = 0; i < this.numRowsToGenerate; i++) {
+    for (i = 0; i < this.selectedConfigNumRowsToGenerate; i++) {
 
       cellValues = [];
       for (let cellTemplate of cellTemplates) {
@@ -185,7 +202,7 @@ export class AppHome {
     // Push the data into the sheet
     this.workbook.Sheets["Sheet 1"] = XLSX.utils.aoa_to_sheet(ws_data);
     // Write the file which prompts for download
-    XLSX.writeFile(this.workbook, `${this.name}.xlsx`);
+    XLSX.writeFile(this.workbook, `${this.selectedConfigName}.xlsx`);
   }
 
   addDataRow() {
@@ -201,27 +218,43 @@ export class AppHome {
   @Listen('ionChange')
   handleFieldChange(event: any) {
     if (event && event.detail) {
-      if (event.target.id === "name") {
-        this.name = event.detail.value;
+      if (event.target.id === "configName") {
+        this.selectedConfigName = event.detail.value;
+        this.selectedConfiguration.name = event.detail.value;
       }
       else if (event.target.id === "baseValue") {
-        this.baseValue = event.detail.value;
+        this.selectedConfigBaseValue = event.detail.value;
+        this.selectedConfiguration.baseValue = event.detail.value;
         this.configHasChanges = true;
       }
       else if (event.target.id === "numRows") {
-        this.numRowsToGenerate = event.detail.value;
+        this.selectedConfigNumRowsToGenerate = event.detail.value;
+        this.selectedConfiguration.numRowsToGenerate = event.detail.value;
         this.configHasChanges = true;
       }
       else if (event.target.id === "isCounterPadded") {
-        this.isCounterPadded = event.detail.checked;
+        this.selectedConfigPadIncrementedNumbers = event.detail.checked;
+        this.selectedConfiguration.padIncrementedNumbers = event.detail.checked;
         this.configHasChanges = true;
       }
       else if (event.target.id === "configSelect") {
-        if (this.selectedConfigName != event.detail.value) {
+        if (!this.selectedConfiguration 
+          || (this.selectedConfiguration && this.selectedConfiguration.name != event.detail.value)) {
           this.loadConfiguration(event.detail.value);
         }
       }
     }
+  }
+
+  @Listen('body:dataRowUpdated')
+  handleDataRowUpdated(event: any) {
+    
+    this.selectedConfiguration.columns[event.detail.index] = {
+      name: event.detail.columnName,
+      cellTemplate: event.detail.columnValue,
+      isActive: event.detail.isActive
+    };
+    this.configHasChanges = true;
   }
 
   render() {
@@ -239,7 +272,7 @@ export class AppHome {
                 Configuration Settings
               </ion-label>
               <ion-button slot="end" 
-                          onClick={ () => this.displayNewConfigModal() }>
+                          onClick={ () => this.displayModal('configuration-create') }>
                 New
               </ion-button>
             </ion-item>
@@ -249,7 +282,7 @@ export class AppHome {
               <ion-row>
                 <ion-col col-lg-6 col-md-12 col-sm-12 col-12 align-self-stretch> 
                   <ion-item>
-                    <ion-label position='floating'>Name</ion-label>
+                    <ion-label position='floating'>Configuration</ion-label>
                     <ion-select id="configSelect" 
                                 value={ this.selectedConfigName }
                                 selectedText={ this.selectedConfigName }>
@@ -257,6 +290,11 @@ export class AppHome {
                         <ion-select-option value={ configuration.name }>{ configuration.name }</ion-select-option>
                       )}
                     </ion-select>
+                    <ion-button slot='end' size='small' fill='clear'
+                                disabled={ !this.selectedConfigName }
+                                onClick={ () => this.displayModal('configuration-edit', { configurationName: this.selectedConfigName}) }>
+                      <ion-icon slot="icon-only" name="create"></ion-icon>
+                    </ion-button>
                   </ion-item>
                   <ion-item>
                     <ion-label position='floating'># Rows to Generate</ion-label>
@@ -264,19 +302,19 @@ export class AppHome {
                                type="number" 
                                min="1" 
                                max="100000" 
-                               value={ this.numRowsToGenerate.toString() }></ion-input>
+                               value={ this.selectedConfigNumRowsToGenerate.toString() }></ion-input>
                   </ion-item>
                 </ion-col>
                 <ion-col col-lg-6 col-md-12 col-sm-12 col-12 align-self-stretch>
                   <ion-item>
                     <ion-label position='floating'>Base Value</ion-label>
                     <ion-input id="baseValue" 
-                               value={ this.baseValue }></ion-input>
+                               value={ this.selectedConfigBaseValue }></ion-input>
                   </ion-item>
                   <ion-item>
                     <ion-label>Pad Incremented Numbers</ion-label>
                     <ion-checkbox id="isCounterPadded" 
-                                  checked={ this.isCounterPadded }></ion-checkbox>
+                                  checked={ this.selectedConfigPadIncrementedNumbers }></ion-checkbox>
                   </ion-item>
                 </ion-col>
               </ion-row>

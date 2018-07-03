@@ -1,4 +1,4 @@
-import { Component, Listen, Method, State } from '@stencil/core';
+import { Component, Event, EventEmitter, Listen, Method, State } from '@stencil/core';
 import { DataRow } from '../../interfaces/interfaces';
 
 @Component({
@@ -7,6 +7,7 @@ import { DataRow } from '../../interfaces/interfaces';
 })
 export class DataGrid {
 
+  @Event() dataRowUpdated: EventEmitter;
   @State() dataRows: Array<DataRow> = []
 
   componentWillLoad() {
@@ -23,6 +24,12 @@ export class DataGrid {
   getDataRows() {
 
     return this.dataRows;
+  }
+
+  @Method()
+  loadDataRows(dataRows: Array<DataRow>) {
+
+    this.dataRows = dataRows;
   }
 
   @Method()
@@ -67,14 +74,19 @@ export class DataGrid {
   @Listen('ionChange')
   handleFieldChange(event: any) {
     if (event && event.detail) {
+      
+      var rowIndex = event.target.id.split('_')[1];
       if(event.target.id.startsWith("clmnName_")) {
         this.dataRows[this.getIndexFromId(event.target.id)].columnName = event.detail.value;
+        this.dataRowUpdated.emit(this.dataRows[rowIndex]);
       }
       else if(event.target.id.startsWith("clmnValue_")) {
         this.dataRows[this.getIndexFromId(event.target.id)].columnValue = event.detail.value;
+        this.dataRowUpdated.emit(this.dataRows[rowIndex]);
       }
       else if(event.target.id.startsWith("include_")) {
         this.dataRows[this.getIndexFromId(event.target.id)].isActive = event.detail.checked;
+        this.dataRowUpdated.emit(this.dataRows[rowIndex]);
       }
     }
   }

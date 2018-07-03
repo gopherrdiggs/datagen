@@ -1,14 +1,21 @@
-import { Component, Element, Event, EventEmitter, Listen, State } from '@stencil/core';
+import { Component, Element, Event, EventEmitter, Listen, Prop, State } from '@stencil/core';
 
 @Component({
-  tag: 'configuration-create'
+  tag: 'configuration-edit'
 })
-export class ConfigurationCreate {
+export class ConfigurationEdit {
 
   @Element() el: any;
-  @Event() configurationCreated: EventEmitter;
+  @Event() configurationEdited: EventEmitter;
+  @Prop() configurationName: string;
   @State() configName: string;
   @State() isFormValid: boolean;
+
+  componentWillLoad() {
+
+    this.configName = this.configurationName;
+    this.isFormValid = this.configName.length > 0;
+  }
 
   saveConfiguration() {
 
@@ -18,7 +25,7 @@ export class ConfigurationCreate {
   dismiss(data?: any) {
     
     if (data) {
-      this.configurationCreated.emit(data);
+      this.configurationEdited.emit(data);
     }
     (this.el.closest('ion-modal') as any).dismiss();
   }
@@ -38,7 +45,7 @@ export class ConfigurationCreate {
       <ion-header>
         <ion-toolbar color="primary">
           <ion-title>
-            Create Configuration
+            Edit Configuration
           </ion-title>
         </ion-toolbar>
       </ion-header>,
@@ -46,7 +53,7 @@ export class ConfigurationCreate {
         <ion-item></ion-item>
         <ion-item>
           <ion-label>Configuration Name</ion-label>
-          <ion-input id="configName"></ion-input>
+          <ion-input id="configName" value={ this.configName }></ion-input>
         </ion-item>
         <ion-item></ion-item>
         <ion-button disabled={ this.isFormValid ? false : true } 

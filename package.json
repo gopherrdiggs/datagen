@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@ionic/core": "latest",
-    "@stencil/core": "0.10.0-6"
+    "@stencil/core": "0.10.0-11"
   },
   "devDependencies": {
     "@types/jest": "^22.2.2",
@@ -25,14 +25,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ionic-team/ionic-pwa-toolkit.git"
+    "url": "git+https://github.com/gopherrdiggs/datagen.git"
   },
-  "author": "Ionic Team",
-  "license": "MIT",
+  "author": "Geoffrey Rodgers",
   "bugs": {
-    "url": "https://github.com/ionic-team/stencil"
+    "url": "https://github.com/gopherrdiggs/datagen"
   },
-  "homepage": "https://github.com/ionic-team/ionic-pwa-toolkit",
+  "homepage": "https://github.com/gopherrdiggs/datagen",
   "jest": {
     "transform": {
       "^.+\\.(js|ts|tsx)$": "<rootDir>/node_modules/@stencil/core/testing/jest.preprocessor.js"

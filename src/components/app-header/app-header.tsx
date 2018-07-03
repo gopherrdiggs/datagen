@@ -14,7 +14,7 @@ export class AppHeader {
           </ion-buttons>
           <ion-title>DataGen</ion-title>
           <ion-buttons slot="end">
-            <ion-button href='/sign-in'>Sign In</ion-button>
+            <ion-button href='/signin-register'>Sign In / Register</ion-button>
           </ion-buttons>
         </ion-toolbar>
         <slot name="secondary-toolbar"/>

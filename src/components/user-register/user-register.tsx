@@ -1,12 +1,24 @@
 import { Component, State } from '@stencil/core';
+declare const AWS: any;
 
 @Component({
-  tag: 'user-signin'
+  tag: 'user-register'
 })
-export class UserSignin {
+export class UserRegister {
 
   @State() emailAddress: string;
   @State() password: string;
+  userPool: any;
+
+  componentWillLoad() {
+
+    console.log(AWS);
+    console.log(this.userPool);
+  }
+
+  registerUser() {
+
+  }
 
   render() {
     return[
@@ -25,7 +37,9 @@ export class UserSignin {
                       type="password"
                       value={ this.password }></ion-input>
           </ion-item>
-          <ion-button>Sign In</ion-button>
+          <ion-button onClick={ () => this.registerUser() }>
+            Register
+          </ion-button>
         </ion-card-content>
       </ion-card>
     ];

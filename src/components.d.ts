@@ -68,30 +68,30 @@ declare global {
 declare global {
 
   namespace StencilComponents {
-    interface AboutSavedConfigurations {
+    interface AboutNamedConfigurations {
 
     }
   }
 
-  interface HTMLAboutSavedConfigurationsElement extends StencilComponents.AboutSavedConfigurations, HTMLStencilElement {}
+  interface HTMLAboutNamedConfigurationsElement extends StencilComponents.AboutNamedConfigurations, HTMLStencilElement {}
 
-  var HTMLAboutSavedConfigurationsElement: {
-    prototype: HTMLAboutSavedConfigurationsElement;
-    new (): HTMLAboutSavedConfigurationsElement;
+  var HTMLAboutNamedConfigurationsElement: {
+    prototype: HTMLAboutNamedConfigurationsElement;
+    new (): HTMLAboutNamedConfigurationsElement;
   };
   interface HTMLElementTagNameMap {
-    'about-saved-configurations': HTMLAboutSavedConfigurationsElement;
+    'about-named-configurations': HTMLAboutNamedConfigurationsElement;
   }
   interface ElementTagNameMap {
-    'about-saved-configurations': HTMLAboutSavedConfigurationsElement;
+    'about-named-configurations': HTMLAboutNamedConfigurationsElement;
   }
   namespace JSX {
     interface IntrinsicElements {
-      'about-saved-configurations': JSXElements.AboutSavedConfigurationsAttributes;
+      'about-named-configurations': JSXElements.AboutNamedConfigurationsAttributes;
     }
   }
   namespace JSXElements {
-    export interface AboutSavedConfigurationsAttributes extends HTMLAttributes {
+    export interface AboutNamedConfigurationsAttributes extends HTMLAttributes {
 
     }
   }
@@ -332,9 +332,44 @@ declare global {
 declare global {
 
   namespace StencilComponents {
+    interface ConfigurationEdit {
+      'configurationName': string;
+    }
+  }
+
+  interface HTMLConfigurationEditElement extends StencilComponents.ConfigurationEdit, HTMLStencilElement {}
+
+  var HTMLConfigurationEditElement: {
+    prototype: HTMLConfigurationEditElement;
+    new (): HTMLConfigurationEditElement;
+  };
+  interface HTMLElementTagNameMap {
+    'configuration-edit': HTMLConfigurationEditElement;
+  }
+  interface ElementTagNameMap {
+    'configuration-edit': HTMLConfigurationEditElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'configuration-edit': JSXElements.ConfigurationEditAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface ConfigurationEditAttributes extends HTMLAttributes {
+      'configurationName'?: string;
+      'onConfigurationEdited'?: (event: CustomEvent) => void;
+    }
+  }
+}
+
+
+declare global {
+
+  namespace StencilComponents {
     interface DataGrid {
       'getDataRows': () => DataRow[];
       'insertDataRow': (index?: number) => void;
+      'loadDataRows': (dataRows: DataRow[]) => void;
     }
   }
 
@@ -357,7 +392,7 @@ declare global {
   }
   namespace JSXElements {
     export interface DataGridAttributes extends HTMLAttributes {
-
+      'onDataRowUpdated'?: (event: CustomEvent) => void;
     }
   }
 }
@@ -390,6 +425,72 @@ declare global {
   }
   namespace JSXElements {
     export interface MyAppAttributes extends HTMLAttributes {
+
+    }
+  }
+}
+
+
+declare global {
+
+  namespace StencilComponents {
+    interface SigninRegister {
+
+    }
+  }
+
+  interface HTMLSigninRegisterElement extends StencilComponents.SigninRegister, HTMLStencilElement {}
+
+  var HTMLSigninRegisterElement: {
+    prototype: HTMLSigninRegisterElement;
+    new (): HTMLSigninRegisterElement;
+  };
+  interface HTMLElementTagNameMap {
+    'signin-register': HTMLSigninRegisterElement;
+  }
+  interface ElementTagNameMap {
+    'signin-register': HTMLSigninRegisterElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'signin-register': JSXElements.SigninRegisterAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface SigninRegisterAttributes extends HTMLAttributes {
+
+    }
+  }
+}
+
+
+declare global {
+
+  namespace StencilComponents {
+    interface UserRegister {
+
+    }
+  }
+
+  interface HTMLUserRegisterElement extends StencilComponents.UserRegister, HTMLStencilElement {}
+
+  var HTMLUserRegisterElement: {
+    prototype: HTMLUserRegisterElement;
+    new (): HTMLUserRegisterElement;
+  };
+  interface HTMLElementTagNameMap {
+    'user-register': HTMLUserRegisterElement;
+  }
+  interface ElementTagNameMap {
+    'user-register': HTMLUserRegisterElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'user-register': JSXElements.UserRegisterAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface UserRegisterAttributes extends HTMLAttributes {
 
     }
   }

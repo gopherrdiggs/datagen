@@ -24,6 +24,12 @@ export class UserSignin {
     });
   }
 
+  pushComponent(component: string) {
+
+    var navElem = document.querySelector('ion-nav');
+    navElem.push(component);
+  }
+
   signIn() {
     
     var userData = {
@@ -52,6 +58,7 @@ export class UserSignin {
     localStorage.setItem('datagen_userEmail', this._emailAddress);
     localStorage.setItem('datagen_userJwtToken', result.accessToken.jwtToken);
     this.userSignedIn.emit();
+    this.pushComponent('app-home');
   }
 
   authenticateUserFailed(error) {

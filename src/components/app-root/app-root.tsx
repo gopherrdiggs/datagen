@@ -1,4 +1,4 @@
-import { Component, Event, EventEmitter, Listen, Prop } from '@stencil/core';
+import { Component, Event, EventEmitter, Listen, Prop, State } from '@stencil/core';
 
 @Component({
   tag: 'app-root'
@@ -7,6 +7,49 @@ export class AppRoot {
 
   @Event() userSignedOut: EventEmitter;
   @Prop({ connect: 'ion-toast-controller' }) toastCtrl: HTMLIonToastControllerElement;
+  @State() _isUserSignedIn: boolean;
+
+  componentWillLoad() {
+
+    this.updateUserSignedInStatus();
+  }
+
+  pushComponent(component: string) {
+
+    var navElem = document.querySelector('ion-nav');
+    navElem.push(component);
+  }
+
+  updateUserSignedInStatus() {
+
+    if (localStorage.getItem('datagen_userEmail')) {
+
+      this._isUserSignedIn = true;
+    }
+    else {
+      this._isUserSignedIn = false;
+    }
+  }
+
+  async signOut() {
+
+    localStorage.removeItem('datagen_userEmail');
+    this.userSignedOut.emit();
+    this.updateUserSignedInStatus();
+    this.pushComponent('signin-register');
+    const toast = await this.toastCtrl.create({
+      message: 'Signed out successfully.',
+      duration: 5000
+    });
+    await toast.present();
+  }
+
+  @Listen('body:userSignedIn')
+  handleUserSignedIn(event: any) {
+    if (event) {
+      this.updateUserSignedInStatus();
+    }
+  }
 
   /**
    * Handle service worker updates correctly.
@@ -29,17 +72,6 @@ export class AppRoot {
     window.location.reload();
   }
 
-  async signOut() {
-
-    localStorage.removeItem('datagen_userEmail');
-    this.userSignedOut.emit();
-    const toast = await this.toastCtrl.create({
-      message: 'See ya later!',
-      duration: 5000
-    });
-    await toast.present();
-  }
-
   configureRoutes() {
     return(
       <ion-router useHash={false}>
@@ -53,6 +85,19 @@ export class AppRoot {
         <ion-route url="/authcallback" component="app-authcallback" />
       </ion-router>
     );
+  }
+
+  renderForSignedInUser() {
+    return [
+      <ion-item button href='/user-account'>Manage Account</ion-item>,
+      <ion-item button onClick={ () => this.signOut() }>Sign Out</ion-item>
+    ];
+  }
+
+  renderForGuestUser() {
+    return [
+      <ion-item button href='/signin-register'>Sign In / Register</ion-item>
+    ];
   }
 
   render() {
@@ -81,9 +126,10 @@ export class AppRoot {
               </ion-list>
               <ion-list>
               <ion-item disabled>Account</ion-item>
-                <ion-item button href='/signin-register'>Sign In / Register</ion-item>
-                <ion-item button href='/user-account'>Manage Account</ion-item>
-                <ion-item button onClick={ () => this.signOut() }>Sign Out</ion-item>
+                { this._isUserSignedIn
+                  ? this.renderForSignedInUser()
+                  : this.renderForGuestUser()
+                }
               </ion-list>
             </ion-content>
           </ion-menu>

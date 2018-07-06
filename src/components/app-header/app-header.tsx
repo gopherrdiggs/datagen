@@ -30,7 +30,6 @@ export class AppHeader {
   @Listen('body:userSignedOut')
   handleUserSignIn(event: any) {
     
-    console.log("handling user signed in/out event");
     if (event) {
 
       this.updateSignedInStatus();
@@ -47,7 +46,7 @@ export class AppHeader {
           <ion-title>DataGen</ion-title>
           <ion-buttons slot="end">
             { this._userLoggedIn
-              ? <ion-button href='/manage-account'>{ this._userEmail }</ion-button>
+              ? <ion-button href='/user-account'>{ this._userEmail }</ion-button>
               : <ion-button href='/signin-register'>Sign In / Register</ion-button>
             }
           </ion-buttons>

@@ -1,6 +1,5 @@
 
 exports.config = {
-  enableCache: false,
   outputTargets: [
     {
       type: 'www',

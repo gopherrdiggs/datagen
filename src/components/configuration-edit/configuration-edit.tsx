@@ -8,18 +8,18 @@ export class ConfigurationEdit {
   @Element() el: any;
   @Event() configurationEdited: EventEmitter;
   @Prop() configurationName: string;
-  @State() configName: string;
-  @State() isFormValid: boolean;
+  @State() _configName: string;
+  @State() _isFormValid: boolean;
 
   componentWillLoad() {
 
-    this.configName = this.configurationName;
-    this.isFormValid = this.configName.length > 0;
+    this._configName = this.configurationName;
+    this._isFormValid = this._configName.length > 0;
   }
 
   saveConfiguration() {
 
-    this.dismiss(this.configName);
+    this.dismiss(this._configName);
   }
 
   dismiss(data?: any) {
@@ -34,8 +34,8 @@ export class ConfigurationEdit {
   handleFieldChange(event: any) {
     if (event && event.detail) {
       if (event.target.id === "configName") {
-        this.configName = event.detail.value;
-        this.isFormValid = this.configName.length > 0;
+        this._configName = event.detail.value;
+        this._isFormValid = this._configName.length > 0;
       }
     }
   }
@@ -53,10 +53,10 @@ export class ConfigurationEdit {
         <ion-item></ion-item>
         <ion-item>
           <ion-label>Configuration Name</ion-label>
-          <ion-input id="configName" value={ this.configName }></ion-input>
+          <ion-input id="configName" value={ this._configName }></ion-input>
         </ion-item>
         <ion-item></ion-item>
-        <ion-button disabled={ this.isFormValid ? false : true } 
+        <ion-button disabled={ this._isFormValid ? false : true } 
                     onClick={ () => this.saveConfiguration() }>
           Save Configuration
         </ion-button>

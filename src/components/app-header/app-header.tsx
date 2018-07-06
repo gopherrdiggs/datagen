@@ -1,9 +1,41 @@
-import { Component } from '@stencil/core';
+import { Component, Listen, State } from '@stencil/core';
 
 @Component({
   tag: 'app-header'
 })
 export class AppHeader {
+
+  @State() _userLoggedIn: boolean;
+  @State() _userEmail: string;
+
+  componentWillLoad() {
+
+    this.updateSignedInStatus();
+  }
+
+  updateSignedInStatus() {
+
+    var email = localStorage.getItem('datagen_userEmail');
+    if (email) {
+      this._userEmail = email;
+      this._userLoggedIn = true;
+    }
+    else {
+      this._userEmail = '';
+      this._userLoggedIn = false;
+    }
+  }
+
+  @Listen('body:userSignedIn')
+  @Listen('body:userSignedOut')
+  handleUserSignIn(event: any) {
+    
+    console.log("handling user signed in/out event");
+    if (event) {
+
+      this.updateSignedInStatus();
+    }
+  }
 
   render() {
     return (
@@ -14,7 +46,10 @@ export class AppHeader {
           </ion-buttons>
           <ion-title>DataGen</ion-title>
           <ion-buttons slot="end">
-            <ion-button href='/signin-register'>Sign In / Register</ion-button>
+            { this._userLoggedIn
+              ? <ion-button href='/manage-account'>{ this._userEmail }</ion-button>
+              : <ion-button href='/signin-register'>Sign In / Register</ion-button>
+            }
           </ion-buttons>
         </ion-toolbar>
         <slot name="secondary-toolbar"/>

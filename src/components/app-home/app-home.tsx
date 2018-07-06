@@ -10,13 +10,13 @@ export class AppHome {
 
   userSettings: UserSettings;
   selectedConfiguration: Configuration;
-  @State() userConfigurations: Array<Configuration> = [];
-  @State() selectedConfigName: string = '';
-  @State() selectedConfigBaseValue: string = '';
-  @State() selectedConfigNumRowsToGenerate: number = 1;
-  @State() selectedConfigPadIncrementedNumbers: boolean = true;
-  @State() selectedConfigColumns: Array<ConfigurationColumn> = [];
-  @State() configHasChanges: boolean = false;
+  @State() _userConfigurations: Array<Configuration> = [];
+  @State() _selectedConfigName: string = '';
+  @State() _selectedConfigBaseValue: string = '';
+  @State() _selectedConfigNumRowsToGenerate: number = 1;
+  @State() _selectedConfigPadIncrementedNumbers: boolean = true;
+  @State() _selectedConfigColumns: Array<ConfigurationColumn> = [];
+  @State() _configHasChanges: boolean = false;
   localStorageKey: string = 'datagen_configs';
   userId: string;
   dataGridElem: any;
@@ -37,7 +37,7 @@ export class AppHome {
       this.userSettings = JSON.parse(userSettings);
     }
 
-    this.userConfigurations = this.userSettings.configurations;
+    this._userConfigurations = this.userSettings.configurations;
   }
 
   componentDidLoad() {
@@ -47,17 +47,17 @@ export class AppHome {
 
   loadConfiguration(configName: string) {
 
-    var config = this.userConfigurations.find(c => { return c.name === configName });
+    var config = this._userConfigurations.find(c => { return c.name === configName });
     if (!config) { return; }
     this.selectedConfiguration = config;
-    this.selectedConfigName = config.name;
-    this.selectedConfigBaseValue = config.baseValue;
-    this.selectedConfigNumRowsToGenerate = config.numRowsToGenerate;
-    this.selectedConfigPadIncrementedNumbers = config.padIncrementedNumbers;
-    this.selectedConfigColumns = config.columns;
+    this._selectedConfigName = config.name;
+    this._selectedConfigBaseValue = config.baseValue;
+    this._selectedConfigNumRowsToGenerate = config.numRowsToGenerate;
+    this._selectedConfigPadIncrementedNumbers = config.padIncrementedNumbers;
+    this._selectedConfigColumns = config.columns;
     let dataRows: Array<DataRow> = [];
     let indx = 0;
-    for (let col of this.selectedConfigColumns) {
+    for (let col of this._selectedConfigColumns) {
       dataRows.push({
         index: indx++,
         columnName: col.name,
@@ -70,10 +70,10 @@ export class AppHome {
 
   async saveUserSettings() {
 
-    this.userSettings.configurations = this.userConfigurations;
+    this.userSettings.configurations = this._userConfigurations;
     localStorage.setItem(this.localStorageKey, JSON.stringify(this.userSettings));
     await this.displayToast('Settings saved!');
-    this.configHasChanges = false;
+    this._configHasChanges = false;
   }
 
   async displayModal(component: string, componentProps?: any) {
@@ -107,20 +107,20 @@ export class AppHome {
       padIncrementedNumbers: true,
       columns: []
     };
-    this.userConfigurations = [...this.userConfigurations,newConfig];
+    this._userConfigurations = [...this._userConfigurations,newConfig];
     this.loadConfiguration(newConfig.name);
   }
 
   @Listen('body:configurationEdited')
   handleConfigEdited(event: any) {
 
-    this.userConfigurations = this.userConfigurations.map(c => { 
-      if (c.name === this.selectedConfigName) {
+    this._userConfigurations = this._userConfigurations.map(c => { 
+      if (c.name === this._selectedConfigName) {
         c.name =  event.detail;
       }
       return c;
     });
-    this.selectedConfigName = event.detail;
+    this._selectedConfigName = event.detail;
   }
 
   async processCellTemplate(template: string) {
@@ -129,7 +129,7 @@ export class AppHome {
     var uppedTemplate = template.toUpperCase();
 
     // {Base} = base value entered
-    template = template.replace(/{base}/gi, this.selectedConfigBaseValue);
+    template = template.replace(/{base}/gi, this._selectedConfigBaseValue);
     // {Today} = today's date in format MM/dd/yyyy
     if (uppedTemplate.indexOf('{TODAY}') > -1) {
       var today = new Date();
@@ -141,8 +141,8 @@ export class AppHome {
     // {x} = incrementing counter
     if (uppedTemplate.indexOf('{X}') > -1) {
       template = template.replace(/{x}/gi, 
-        this.selectedConfigPadIncrementedNumbers
-          ? this.counter.toString().padStart(this.selectedConfigNumRowsToGenerate.toString().length, '0')
+        this._selectedConfigPadIncrementedNumbers
+          ? this.counter.toString().padStart(this._selectedConfigNumRowsToGenerate.toString().length, '0')
           : this.counter.toString());
     }
     // {rand(x,y)} = random number between x and y
@@ -178,7 +178,7 @@ export class AppHome {
     var i;
     var cellValues: Array<any>;
     this.counter = 1;
-    for (i = 0; i < this.selectedConfigNumRowsToGenerate; i++) {
+    for (i = 0; i < this._selectedConfigNumRowsToGenerate; i++) {
 
       cellValues = [];
       for (let cellTemplate of cellTemplates) {
@@ -208,7 +208,7 @@ export class AppHome {
     // Push the data into the sheet
     this.workbook.Sheets["Sheet 1"] = XLSX.utils.aoa_to_sheet(ws_data);
     // Write the file which prompts for download
-    XLSX.writeFile(this.workbook, `${this.selectedConfigName}.xlsx`);
+    XLSX.writeFile(this.workbook, `${this._selectedConfigName}.xlsx`);
   }
 
   addDataRow() {
@@ -225,23 +225,23 @@ export class AppHome {
   handleFieldChange(event: any) {
     if (event && event.detail) {
       if (event.target.id === "configName") {
-        this.selectedConfigName = event.detail.value;
+        this._selectedConfigName = event.detail.value;
         this.selectedConfiguration.name = event.detail.value;
       }
       else if (event.target.id === "baseValue") {
-        this.selectedConfigBaseValue = event.detail.value;
+        this._selectedConfigBaseValue = event.detail.value;
         this.selectedConfiguration.baseValue = event.detail.value;
-        this.configHasChanges = true;
+        this._configHasChanges = true;
       }
       else if (event.target.id === "numRows") {
-        this.selectedConfigNumRowsToGenerate = event.detail.value;
+        this._selectedConfigNumRowsToGenerate = event.detail.value;
         this.selectedConfiguration.numRowsToGenerate = event.detail.value;
-        this.configHasChanges = true;
+        this._configHasChanges = true;
       }
       else if (event.target.id === "isCounterPadded") {
-        this.selectedConfigPadIncrementedNumbers = event.detail.checked;
+        this._selectedConfigPadIncrementedNumbers = event.detail.checked;
         this.selectedConfiguration.padIncrementedNumbers = event.detail.checked;
-        this.configHasChanges = true;
+        this._configHasChanges = true;
       }
       else if (event.target.id === "configSelect") {
         if (!this.selectedConfiguration 
@@ -255,22 +255,22 @@ export class AppHome {
   @Listen('body:dataRowUpdated')
   handleDataRowUpdated(event: any) {
     
-    this.selectedConfigColumns[event.detail.index] = {
+    this._selectedConfigColumns[event.detail.index] = {
       name: event.detail.columnName,
       cellTemplate: event.detail.columnValue,
       isActive: event.detail.isActive
     };
 
-    this.selectedConfiguration.columns = this.selectedConfigColumns;
+    this.selectedConfiguration.columns = this._selectedConfigColumns;
 
-    this.configHasChanges = true;
+    this._configHasChanges = true;
   }
 
   @Listen('body:dataRowDeleted')
   handleDataRowDeleted(event: any) {
     
-    var clmnToRemove = this.selectedConfigColumns[event.detail - 1];
-    this.selectedConfigColumns = this.selectedConfigColumns.filter(c => {
+    var clmnToRemove = this._selectedConfigColumns[event.detail - 1];
+    this._selectedConfigColumns = this._selectedConfigColumns.filter(c => {
       return c.name != clmnToRemove.name && c.cellTemplate != clmnToRemove.cellTemplate;
     });
   }
@@ -302,15 +302,15 @@ export class AppHome {
                   <ion-item>
                     <ion-label position='floating'>Configuration</ion-label>
                     <ion-select id="configSelect" 
-                                value={ this.selectedConfigName }
-                                selectedText={ this.selectedConfigName }>
-                      { this.userConfigurations.map(configuration => 
+                                value={ this._selectedConfigName }
+                                selectedText={ this._selectedConfigName }>
+                      { this._userConfigurations.map(configuration => 
                         <ion-select-option value={ configuration.name }>{ configuration.name }</ion-select-option>
                       )}
                     </ion-select>
                     <ion-button slot='end' size='small' fill='clear'
-                                disabled={ !this.selectedConfigName }
-                                onClick={ () => this.displayModal('configuration-edit', { configurationName: this.selectedConfigName}) }>
+                                disabled={ !this._selectedConfigName }
+                                onClick={ () => this.displayModal('configuration-edit', { configurationName: this._selectedConfigName}) }>
                       <ion-icon slot="icon-only" name="create"></ion-icon>
                     </ion-button>
                   </ion-item>
@@ -320,19 +320,19 @@ export class AppHome {
                                type="number" 
                                min="1" 
                                max="100000" 
-                               value={ this.selectedConfigNumRowsToGenerate.toString() }></ion-input>
+                               value={ this._selectedConfigNumRowsToGenerate.toString() }></ion-input>
                   </ion-item>
                 </ion-col>
                 <ion-col col-lg-6 col-md-12 col-sm-12 col-12 align-self-stretch>
                   <ion-item>
                     <ion-label position='floating'>Base Value</ion-label>
                     <ion-input id="baseValue" 
-                               value={ this.selectedConfigBaseValue }></ion-input>
+                               value={ this._selectedConfigBaseValue }></ion-input>
                   </ion-item>
                   <ion-item>
                     <ion-label>Pad Incremented Numbers</ion-label>
                     <ion-checkbox id="isCounterPadded" 
-                                  checked={ this.selectedConfigPadIncrementedNumbers }></ion-checkbox>
+                                  checked={ this._selectedConfigPadIncrementedNumbers }></ion-checkbox>
                   </ion-item>
                 </ion-col>
               </ion-row>
@@ -341,7 +341,7 @@ export class AppHome {
                   <ion-button onClick={ () => this.generateSpreadsheet() }>
                     Generate Spreadsheet
                   </ion-button>
-                  <ion-button disabled={ this.configHasChanges ? false : true }
+                  <ion-button disabled={ this._configHasChanges ? false : true }
                               onClick={ () => this.saveUserSettings() }>
                     Save Changes
                   </ion-button>

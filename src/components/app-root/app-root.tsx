@@ -1,11 +1,12 @@
-import { Component, Listen, Prop } from '@stencil/core';
+import { Component, Event, EventEmitter, Listen, Prop } from '@stencil/core';
 
 @Component({
   tag: 'app-root'
 })
 export class AppRoot {
-  @Prop({ connect: 'ion-toast-controller' })
-  toastCtrl: HTMLIonToastControllerElement;
+
+  @Event() userSignedOut: EventEmitter;
+  @Prop({ connect: 'ion-toast-controller' }) toastCtrl: HTMLIonToastControllerElement;
 
   /**
    * Handle service worker updates correctly.
@@ -28,6 +29,17 @@ export class AppRoot {
     window.location.reload();
   }
 
+  async signOut() {
+
+    localStorage.removeItem('datagen_userEmail');
+    this.userSignedOut.emit();
+    const toast = await this.toastCtrl.create({
+      message: 'See ya later!',
+      duration: 5000
+    });
+    await toast.present();
+  }
+
   configureRoutes() {
     return(
       <ion-router useHash={false}>
@@ -37,6 +49,7 @@ export class AppRoot {
         <ion-route url="/cell-templates" component="about-cell-templates" />
         <ion-route url="/spreadsheetgen" component="app-home" />
         <ion-route url="/signin-register" component="signin-register" /> 
+        <ion-route url="/user-account" component="user-account" /> 
         <ion-route url="/authcallback" component="app-authcallback" />
       </ion-router>
     );
@@ -69,6 +82,8 @@ export class AppRoot {
               <ion-list>
               <ion-item disabled>Account</ion-item>
                 <ion-item button href='/signin-register'>Sign In / Register</ion-item>
+                <ion-item button href='/user-account'>Manage Account</ion-item>
+                <ion-item button onClick={ () => this.signOut() }>Sign Out</ion-item>
               </ion-list>
             </ion-content>
           </ion-menu>

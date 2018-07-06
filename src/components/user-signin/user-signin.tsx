@@ -1,4 +1,5 @@
-import { Component, Listen, State } from '@stencil/core';
+import { Component, Event, EventEmitter, Listen, State } from '@stencil/core';
+import { ENV } from '../../environments/environment';
 declare const AmazonCognitoIdentity: any;
 
 @Component({
@@ -6,8 +7,11 @@ declare const AmazonCognitoIdentity: any;
 })
 export class UserSignin {
 
-  @State() emailAddress: string;
-  @State() password: string;
+  @Event() userSignedIn: EventEmitter;
+  @State() _emailAddress: string;
+  @State() _password: string;
+  @State() _userMessage: string;
+  env: ENV = new ENV();
   userPool: any;
   currentUser: any;
 
@@ -15,15 +19,15 @@ export class UserSignin {
     
     // Create a user pool object as a means of executing pool-related functions (e.g., signUp())
     this.userPool = new AmazonCognitoIdentity.CognitoUserPool({
-      UserPoolId: 'us-east-2_TnkWZ2hqy',
-      ClientId: 'o7598qg7b9e4gn63210btjn7q'
+      UserPoolId: this.env.iamUserPoolId(),
+      ClientId: this.env.iamUserPoolClientId()
     });
   }
 
   signIn() {
     
     var userData = {
-      Username: this.emailAddress.replace('@', '-at-'),
+      Username: this._emailAddress.replace('@', '-at-'),
       Pool: this.userPool
     };
 
@@ -31,59 +35,38 @@ export class UserSignin {
     this.currentUser = new AmazonCognitoIdentity.CognitoUser(userData);
 
     var authenticationData = {
-      Username: this.emailAddress.replace('@', '-at-'),
-      Password: this.password
+      Username: this._emailAddress.replace('@', '-at-'),
+      Password: this._password
     }
 
     var authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
     
     this.currentUser.authenticateUser(authenticationDetails, {
-      onSuccess: this.authenticateUserSucceeded,
-      onFailure: this.authenticateUserFailed
+      onSuccess: this.authenticateUserSucceeded.bind(this),
+      onFailure: this.authenticateUserFailed.bind(this)
     });
   }
 
   authenticateUserSucceeded(result) {
-    console.log("authentication successful:");
-    console.log(result);
+    
+    localStorage.setItem('datagen_userEmail', this._emailAddress);
     localStorage.setItem('datagen_userJwtToken', result.accessToken.jwtToken);
+    this.userSignedIn.emit();
   }
 
   authenticateUserFailed(error) {
-    console.log("authentication failed:");
-    console.log(error);
-  }
-
-  authenticateUserNewPasswordRequired(info) {
-    console.log("new password is required:");
-    console.log(info);
-
-  }
-
-  deleteUser() {
-
-    console.log("attempting to delete user");
-    // var token = localStorage.getItem('datagen_userJwtToken');
-    this.currentUser.deleteUser(function(err, result) {
-      if (err) {
-        console.log("error occurred for deleteUser:");
-        console.log(err);
-      }
-      else {
-        console.log("user deleted successfully:");
-        console.log(result);
-      }
-    });
+    
+    this._userMessage = error.message;
   }
 
   @Listen('ionChange')
   handleFieldChange(event: any) {
     if (event && event.detail) {
       if (event.target.id === "email") {
-        this.emailAddress = event.detail.value;
+        this._emailAddress = event.detail.value;
       }
       else if (event.target.id === "password") {
-        this.password = event.detail.value;
+        this._password = event.detail.value;
       }
     }
   }
@@ -100,21 +83,21 @@ export class UserSignin {
             <ion-input id="email"
                       type="email"
                       placeholder="you@awesome.com"
-                      value={ this.emailAddress }></ion-input>
+                      value={ this._emailAddress }></ion-input>
           </ion-item>
           <ion-item>
             <ion-label>Password</ion-label>
             <ion-input id="password"
                       type="password"
-                      value={ this.password }></ion-input>
+                      value={ this._password }></ion-input>
           </ion-item>
           <ion-item></ion-item>
           <ion-button onClick={ () => this.signIn() }>
             Sign In
           </ion-button>
-          <ion-button onClick={ () => this.deleteUser() }>
-            Delete Account
-          </ion-button>
+        <ion-item style={{ display: this._userMessage ? 'block' : 'none'}}>
+          { this._userMessage }
+        </ion-item>
         </ion-card-content>
       </ion-card>
     ];

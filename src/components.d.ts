@@ -257,7 +257,7 @@ declare global {
   }
   namespace JSXElements {
     export interface AppRootAttributes extends HTMLAttributes {
-
+      'onUserSignedOut'?: (event: CustomEvent) => void;
     }
   }
 }
@@ -402,6 +402,39 @@ declare global {
 declare global {
 
   namespace StencilComponents {
+    interface DeleteAccount {
+      'emailAddress': string;
+    }
+  }
+
+  interface HTMLDeleteAccountElement extends StencilComponents.DeleteAccount, HTMLStencilElement {}
+
+  var HTMLDeleteAccountElement: {
+    prototype: HTMLDeleteAccountElement;
+    new (): HTMLDeleteAccountElement;
+  };
+  interface HTMLElementTagNameMap {
+    'delete-account': HTMLDeleteAccountElement;
+  }
+  interface ElementTagNameMap {
+    'delete-account': HTMLDeleteAccountElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'delete-account': JSXElements.DeleteAccountAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface DeleteAccountAttributes extends HTMLAttributes {
+      'emailAddress'?: string;
+    }
+  }
+}
+
+
+declare global {
+
+  namespace StencilComponents {
     interface MyApp {
 
     }
@@ -468,6 +501,39 @@ declare global {
 declare global {
 
   namespace StencilComponents {
+    interface UserAccount {
+
+    }
+  }
+
+  interface HTMLUserAccountElement extends StencilComponents.UserAccount, HTMLStencilElement {}
+
+  var HTMLUserAccountElement: {
+    prototype: HTMLUserAccountElement;
+    new (): HTMLUserAccountElement;
+  };
+  interface HTMLElementTagNameMap {
+    'user-account': HTMLUserAccountElement;
+  }
+  interface ElementTagNameMap {
+    'user-account': HTMLUserAccountElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'user-account': JSXElements.UserAccountAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface UserAccountAttributes extends HTMLAttributes {
+
+    }
+  }
+}
+
+
+declare global {
+
+  namespace StencilComponents {
     interface UserRegister {
 
     }
@@ -525,7 +591,41 @@ declare global {
   }
   namespace JSXElements {
     export interface UserSigninAttributes extends HTMLAttributes {
+      'onUserSignedIn'?: (event: CustomEvent) => void;
+    }
+  }
+}
 
+
+declare global {
+
+  namespace StencilComponents {
+    interface UserVerification {
+      'emailAddress': string;
+    }
+  }
+
+  interface HTMLUserVerificationElement extends StencilComponents.UserVerification, HTMLStencilElement {}
+
+  var HTMLUserVerificationElement: {
+    prototype: HTMLUserVerificationElement;
+    new (): HTMLUserVerificationElement;
+  };
+  interface HTMLElementTagNameMap {
+    'user-verification': HTMLUserVerificationElement;
+  }
+  interface ElementTagNameMap {
+    'user-verification': HTMLUserVerificationElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'user-verification': JSXElements.UserVerificationAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface UserVerificationAttributes extends HTMLAttributes {
+      'emailAddress'?: string;
+      'onVerificationSucceeded'?: (event: CustomEvent) => void;
     }
   }
 }

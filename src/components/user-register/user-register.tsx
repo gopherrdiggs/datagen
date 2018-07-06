@@ -1,4 +1,5 @@
 import { Component, Listen, State } from '@stencil/core';
+import { ENV } from '../../environments/environment';
 declare const AmazonCognitoIdentity: any;
 
 @Component({
@@ -6,8 +7,9 @@ declare const AmazonCognitoIdentity: any;
 })
 export class UserRegister {
 
-  @State() emailAddress: string;
-  @State() password: string;
+  @State() _emailAddress: string;
+  @State() _password: string;
+  env: ENV = new ENV();
   userPool: any;
   currentUser: any;
 
@@ -15,27 +17,37 @@ export class UserRegister {
 
     // Create a user pool object as a means of executing pool-related functions (e.g., signUp())
     this.userPool = new AmazonCognitoIdentity.CognitoUserPool({
-      UserPoolId: 'us-east-2_TnkWZ2hqy',
-      ClientId: 'o7598qg7b9e4gn63210btjn7q'
+      UserPoolId: this.env.iamUserPoolId(),
+      ClientId: this.env.iamUserPoolClientId()
     });
+  }
+
+  async displayModal(component: string, componentProps?: any) {
+
+    const modalController = document.querySelector('ion-modal-controller');
+    const modal = await modalController.create({
+      component: component,
+      componentProps: componentProps
+    });
+    await modal.present();
   }
 
   async registerUser() {
 
     var emailAttr = new AmazonCognitoIdentity.CognitoUserAttribute({
       Name: 'email',
-      Value: this.emailAddress
+      Value: this._emailAddress
     });
 
     // Register new user account with email address and password
     this.userPool.signUp(
-      this.emailAddress.replace('@', '-at-'),
-      this.password,
+      this._emailAddress.replace('@', '-at-'),
+      this._password,
       [emailAttr],
       null, this.registrationCallback);
   }
 
-  registrationCallback(error, result) {
+  async registrationCallback(error, result) {
     if (error) {
       console.log("registration error occurred:");
       console.log(error);
@@ -43,41 +55,25 @@ export class UserRegister {
     else {
       console.log("user registered successfully:");
       console.log(result);
+      await this.verifyAccount();
     }
   }
 
-  verifyAccount() {
+  async verifyAccount() {
 
-    var userData = {
-      Username: this.emailAddress.replace('@', '-at-'),
-      Pool: this.userPool
-    };
-
-    // Create a user object as a means of executing user-related functions
-    this.currentUser = new AmazonCognitoIdentity.CognitoUser(userData);
-
-    this.currentUser.confirmRegistration('701459', false, this.verificationCallback);
-  }
-
-  verificationCallback(error, result) {
-    if (error) {
-      console.log("verification error occurred:");
-      console.log(error);
-    }
-    else {
-      console.log("account verified successfully:");
-      console.log(result);
-    }
+    await this.displayModal('user-verification', {
+      emailAddress: this._emailAddress
+    });
   }
 
   @Listen('ionChange')
   handleFieldChange(event: any) {
     if (event && event.detail) {
       if (event.target.id === "email") {
-        this.emailAddress = event.detail.value;
+        this._emailAddress = event.detail.value;
       }
       else if (event.target.id === "password") {
-        this.password = event.detail.value;
+        this._password = event.detail.value;
       }
     }
   }
@@ -94,19 +90,20 @@ export class UserRegister {
             <ion-input id="email"
                       type="email"
                       placeholder="you@awesome.com"
-                      value={ this.emailAddress }></ion-input>
+                      value={ this._emailAddress }></ion-input>
           </ion-item>
           <ion-item>
             <ion-label>Password</ion-label>
             <ion-input id="password"
                       type="password"
-                      value={ this.password }></ion-input>
+                      value={ this._password }></ion-input>
           </ion-item>
           <ion-item></ion-item>
           <ion-button onClick={ () => this.registerUser() }>
             Register
           </ion-button>
-          <ion-button onClick={ () => this.verifyAccount() }>
+          <ion-button fill='clear' 
+                      onClick={ () => this.verifyAccount() }>
             Verify Account
           </ion-button>
         </ion-card-content>
